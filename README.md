@@ -19,7 +19,7 @@
 
 4. Run the script with the following command:
    ```bash
-   python script.py -a <WALLET_ADDRESS>
+   python TRON-USDT-CHECKER.py -a <WALLET_ADDRESS>
    ```
 
    Replace `<WALLET_ADDRESS>` with the TRON wallet address you want to search.
@@ -32,7 +32,10 @@
 
 ## Example
    ```bash
-   python script.py -a TTVkMTYuNBEwaap6omzivNunc5KnSkv2wx
+   python TRON-USDT-CHECKER.py -a TTVkMTYuNBEwaap6omzivNunc5KnSkv2wx
    ```
 
    This command searches for transactions related to the specified wallet address.
+
+![image](https://github.com/maccheroncelli/TRON-USDT-CHECKER/assets/154501937/4a4c0cc5-f514-4733-a18c-3d019d4a5dad)
+
