@@ -1,4 +1,4 @@
-# TRON Wallet Address Search
+# TRON USDT Transaction Address Search
 
 ## Minimum Requirements
 - Python 3.x
