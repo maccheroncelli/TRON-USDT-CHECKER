@@ -2,6 +2,7 @@ import requests
 import argparse
 from collections import defaultdict
 import locale
+from prettytable import PrettyTable
 
 def get_tron_data(wallet_address, token_type, contract_address):
     url = f"https://api.trongrid.io/v1/accounts/{wallet_address}/transactions/{token_type}?&contract_address={contract_address}&only_confirmed=true&limit=100"
@@ -51,24 +52,27 @@ def display_results(wallet_address, contract_address, token_type, sent_from, sen
     print(f"Token Type:\t\t{token_type}")
 
     print("\nResults:")
-    
+
     print("FROM:")
-    print("| # | Address | Unique Total |")
-    print("|---|---------|--------------|")
-    for i, (address, total_amount) in enumerate(sent_from.items(), start=start_number):
-        formatted_address = f"\033[91m{address}\033[0m" if address == wallet_address else address
-        formatted_amount = locale.currency(total_amount, grouping=True)
-        print(f"| {i} | {formatted_address} | {formatted_amount} |")
+    display_table(sent_from, start_number)
 
     start_number += len(sent_from)
 
     print("\nTO:")
-    print("| # | Address | Unique Total |")
-    print("|---|---------|--------------|")
-    for i, (address, total_amount) in enumerate(sent_to.items(), start=start_number):
+    display_table(sent_to, start_number)
+
+def display_table(data, start_number):
+    table = PrettyTable()
+    table.field_names = ["#", "Address", "Unique Total"]
+    table.align["#"] = "r"
+    table.align["Address"] = "l"
+
+    for i, (address, total_amount) in enumerate(data.items(), start=start_number):
         formatted_address = f"\033[91m{address}\033[0m" if address == wallet_address else address
         formatted_amount = locale.currency(total_amount, grouping=True)
-        print(f"| {i} | {formatted_address} | {formatted_amount} |")
+        table.add_row([i, formatted_address, formatted_amount])
+
+    print(table)
 
 def get_user_input():
     user_input = input("\nEnter the number to rerun the search (or 'exit' to quit): ")
@@ -94,7 +98,7 @@ if __name__ == "__main__":
         if tron_data:
             sent_from, sent_to = process_tron_data(tron_data, wallet_address)
 
-            # Display results without balance information
+            # Display results with balance information
             display_results(wallet_address, contract_address, token_type, sent_from, sent_to, start_number)
 
             user_choice = get_user_input()
