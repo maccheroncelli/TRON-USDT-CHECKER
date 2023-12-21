@@ -1,4 +1,4 @@
-# TRON USDT 
+# TRON USDT CHECKER
 
 ## Minimum Requirements
 - Python 3.x
