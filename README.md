@@ -10,8 +10,8 @@
 
 ## Functionality
 
-- This script retrieves transaction data for a TRON wallet address.
-- It displays transactions sent from and to the specified wallet address.
+- This script retrieves transaction data for a TRON wallet address, but only lists the total value of USDT per address sent to/from the searched address.
+- This helps to easily identify the addresses that are sending the most USDT, instead of reading multiple pages of transfers on tronscan.
 - The results include the address, unique total amount, and can be sorted in descending order based on the total amount.
 - You can enter the number next to a resulting TRON address to run another check with that address.
 
@@ -32,7 +32,7 @@
 
 ## Example
    ```bash
-   python TRON-USDT-CHECKER.py -a TTVkMTYuNBEwaap6omzivNunc5KnSkv2wx
+   python TRON-USDT-CHECKER.py -a TUNuXdhr3KSzt8LyPz8618uhLkLdzSKCBv
    ```
 
    This command searches for transactions related to the specified wallet address.
