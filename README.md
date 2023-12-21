@@ -1,10 +1,8 @@
-```markdown
 # TRON Wallet Address Search
 
 ## Minimum Requirements
 - Python 3.x
 - Required Python packages:
-```
 
   ```bash
   pip install requests argparse
