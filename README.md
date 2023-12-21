@@ -4,6 +4,7 @@
 ## Minimum Requirements
 - Python 3.x
 - Required Python packages:
+```
 
   ```bash
   pip install requests argparse
@@ -37,5 +38,3 @@
    ```
 
    This command searches for transactions related to the specified wallet address.
-
-Feel free to customize this `README.md` further if needed for your specific use case or preferences.
