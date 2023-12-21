@@ -1,4 +1,4 @@
-# TRON USDT Transaction Address Search
+# TRON USDT 
 
 ## Minimum Requirements
 - Python 3.x
@@ -10,9 +10,9 @@
 
 ## Functionality
 
-- This script retrieves transaction data for a TRON wallet address, but only lists the total value of USDT per address sent to/from the searched address.
-- This helps to easily identify the addresses that are sending the most USDT, instead of reading multiple pages of transfers on tronscan.
-- The results include the address, unique total amount, and can be sorted in descending order based on the total amount.
+- This script retrieves transaction data for a TRON wallet address via Trongrid API.
+- Does not list individual transactions, only lists the total value of USDT per address sent to/from the searched address.
+- This helps to easily identify the addresses that are sending the most USDT, instead of reading multiple pages of transfers on blockchain explorer websites.
 - You can enter the number next to a resulting TRON address to run another check with that address.
 
 ## Usage
