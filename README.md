@@ -5,8 +5,7 @@
 - Required Python packages:
 
   ```bash
-  pip install requests argparse
-  ```
+  pip install requests argparse prettytable
 
 ## Functionality
 
@@ -37,5 +36,6 @@
 
    This command searches for transactions related to the specified wallet address.
 
-![image](https://github.com/maccheroncelli/TRON-USDT-CHECKER/assets/154501937/4a4c0cc5-f514-4733-a18c-3d019d4a5dad)
+![image](https://github.com/maccheroncelli/TRON-USDT-CHECKER/assets/154501937/872bfb90-1ead-4676-97af-11a63607b0a4)
+
 
