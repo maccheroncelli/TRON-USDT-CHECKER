@@ -1,41 +1,39 @@
-# TRON USDT CHECKER
+# USDT - TRON TRC20 Checker
+
+## Overview
+The USDT - TRON TRC20 Checker is a desktop application for analyzing USDT transactions on the TRON network. It fetches and displays transaction data for specified wallet addresses, offering insights into transaction patterns and volumes. It utilizes PyQt5 for its GUI and interacts with the TRONGrid API.
 
 ## Minimum Requirements
 - Python 3.x
-- Required Python packages:
+- PyQt5
+- Requests library
 
-  ```bash
-  pip install requests argparse prettytable
+## Installation and Setup
+1. Install Python 3.x from [Python's official website](https://www.python.org/downloads/).
+2. Install PyQt5 and requests via pip:
 
-## Functionality
-
-- This script retrieves transaction data for a TRON wallet address via Trongrid API.
-- Does not list individual transactions, only lists the total value of USDT per address sent to/from the searched address.
-- This helps to easily identify the addresses that are sending the most USDT, instead of reading multiple pages of transfers on blockchain explorer websites.
-- You can enter the number next to a resulting TRON address to run another check with that address.
-
-## Usage
-
-4. Run the script with the following command:
    ```bash
-   python TRON-USDT-CHECKER.py -a <WALLET_ADDRESS>
+   pip install PyQt5 requests
    ```
 
-   Replace `<WALLET_ADDRESS>` with the TRON wallet address you want to search.
+3. Clone the repository or download the script.
+4. Run the script using Python.
 
-5. Follow the on-screen instructions to navigate through the results.
-   - Enter 'exit' to quit the script.
-   - Enter the number next to a TRON address to run another check with that address.
+Ensure your environment meets these requirements for smooth operation of the application.
 
-6. To exit the script, enter 'exit' when prompted.
+## Features
+- **Fetch Transactions**: Retrieves transaction data from the TRON network using wallet addresses, token types, and contract addresses.
+- **Customizable Query**: Allows setting the number of transactions to retrieve (up to 200).
+- **Transaction Analysis**: Displays the total amount and count of transactions sent to and from different addresses.
+- **Re-run Functionality**: Easily re-query the network with a selected address from the table.
+- **Copy Functionality**: Enables copying selected data directly from the tables.
 
-## Example
-   ```bash
-   python TRON-USDT-CHECKER.py -a TUNuXdhr3KSzt8LyPz8618uhLkLdzSKCBv
-   ```
+## How to Use
+1. **Enter Details**: Input the wallet address, contract address (default provided), token type (default 'TRC-20'), and the transaction limit.
+2. **Run Search**: Click 'Search' to fetch and display transactions.
+3. **Re-run Search**: Select an address from the table and click 'Re-run with selected address' to perform a new search.
+4. **Copy Data**: Select table cells and press Ctrl+C to copy data.
 
-   This command searches for transactions related to the specified wallet address.
-
-![image](https://github.com/maccheroncelli/TRON-USDT-CHECKER/assets/154501937/872bfb90-1ead-4676-97af-11a63607b0a4)
-
-
+## Limitations
+- Rate limits from the TRONGrid API may restrict data completeness (max is 200 transactions/transfers).  If you are hitting the limits, more than likely querying an exchange wallet.
+- Only supports TRC-20 token types. More can be easily added..
