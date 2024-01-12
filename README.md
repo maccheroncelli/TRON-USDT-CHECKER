@@ -37,3 +37,6 @@ Ensure your environment meets these requirements for smooth operation of the app
 ## Limitations
 - Rate limits from the TRONGrid API may restrict data completeness (max is 200 transactions/transfers).  If you are hitting the limits, more than likely querying an exchange wallet.
 - Only supports TRC-20 token types. More can be easily added..
+
+![image](https://github.com/maccheroncelli/TRON-USDT-CHECKER/assets/154501937/0c5a02fe-b232-4e29-8ed4-02ec7f9f86d7)
+
