@@ -1,11 +1,15 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                              QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem,
-                             QMessageBox, QComboBox, QHeaderView)
+                             QMessageBox, QComboBox, QHeaderView, QDesktopWidget)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from collections import defaultdict
 import requests
+import sqlite3
+import webbrowser
+import subprocess
+import os
 
 def create_label_input(label_text):
     layout = QHBoxLayout()
@@ -15,10 +19,56 @@ def create_label_input(label_text):
     layout.addWidget(line_edit)
     return layout, line_edit
 
-class CryptoCheckerGUI(QMainWindow):
+class TronUsdtChecker(QMainWindow):
     def __init__(self):
         super().__init__()
         self.initUI()
+        self.centerOnScreen()
+        
+    def get_exchange_for_address(self, address):
+        db_path = './USDT-TRON-HOTWALLETS.DB'       
+
+        if not os.path.exists(db_path):
+            self.create_database(db_path)
+
+        try:
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT ExchangeName FROM Exchanges INNER JOIN Addresses ON Exchanges.ExchangeID = Addresses.ExchangeID WHERE Address = ?", (address,))
+            result = cursor.fetchone()
+            conn.close()
+            return result[0] if result else None
+        except sqlite3.Error as error:
+            print("Error while connecting to sqlite", error)
+            return None
+            
+    def create_database(self, db_path):
+        try:
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+
+            # Create Exchanges table
+            cursor.execute("""
+                CREATE TABLE Exchanges (
+                    ExchangeID INTEGER PRIMARY KEY,
+                    ExchangeName TEXT NOT NULL UNIQUE
+                );
+            """)
+
+            # Create Addresses table
+            cursor.execute("""
+                CREATE TABLE Addresses (
+                    ExchangeID INTEGER,
+                    Address TEXT NOT NULL,
+                    PRIMARY KEY (ExchangeID, Address),
+                    FOREIGN KEY (ExchangeID) REFERENCES Exchanges(ExchangeID)
+                );
+            """)
+
+            conn.commit()
+            conn.close()
+        except sqlite3.Error as error:
+            print("Error while creating the database", error)
 
     @staticmethod
     def get_tron_data(wallet_address, token_type, contract_address, limit):
@@ -110,43 +160,49 @@ class CryptoCheckerGUI(QMainWindow):
             print("Please select only one address.")
 
     def populate_table(self, table, data):
-        table.setColumnCount(3)  # Three columns: Address, No. Trans., Unique Total
-        table.setHorizontalHeaderLabels(['Address', 'No. Trans.', 'Unique Total'])
+        table.setColumnCount(4)  # Four columns: Address, No. Trans., Unique Total, Attribution
+        table.setHorizontalHeaderLabels(['Address', 'No. Trans.', 'Unique Total', 'Attribution'])
         table.setRowCount(len(data))
 
         for i, (address, values) in enumerate(data.items()):
-            # Create table items
+            exchange_name = self.get_exchange_for_address(address) or "N/A"
+            
             address_item = QTableWidgetItem(address)
             trans_count_item = QTableWidgetItem(str(values['count']))
             amount_item = QTableWidgetItem(f"{values['amount']:,.2f}")
+            attribution_item = QTableWidgetItem(exchange_name)
 
-            # Set text alignment to center
-            address_item.setTextAlignment(Qt.AlignCenter)
-            trans_count_item.setTextAlignment(Qt.AlignCenter)
-            amount_item.setTextAlignment(Qt.AlignCenter)
+            # Set text alignment to center and make items non-editable
+            for item in [address_item, trans_count_item, amount_item, attribution_item]:
+                item.setTextAlignment(Qt.AlignCenter)
+                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
 
-            # Place items in the table
+            # Add items to the table
             table.setItem(i, 0, address_item)
             table.setItem(i, 1, trans_count_item)
             table.setItem(i, 2, amount_item)
+            table.setItem(i, 3, attribution_item)
 
-            # Adjust columns to fit content and set font
-            table.resizeColumnsToContents()
-            table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)  # Address column
-            table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)  # No. Trans. column
-            table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)  # Unique Total column to fill the rest of the table
-            font = QFont("Consolas", 8)
-            table.setFont(font)
-            row_height = font.pointSize() + 4
-            for row in range(table.rowCount()):
-                table.setRowHeight(row, row_height)
+        self.adjust_table_formatting(table)
+
+
+    def adjust_table_formatting(self, table):
+        table.resizeColumnsToContents()
+        table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
+        font = QFont("Consolas", 8)
+        table.setFont(font)
+        row_height = font.pointSize() + 4
+        for row in range(table.rowCount()):
+            table.setRowHeight(row, row_height)
             
     def table_keyPressEvent(self, event):
         if event.key() == Qt.Key_C and (event.modifiers() & Qt.ControlModifier):
             self.copy_selected_cells()
         else:
             # Call the base class method to continue normal event processing
-            super(CryptoCheckerGUI, self).keyPressEvent(event)
+            super(TronUsdtChecker, self).keyPressEvent(event)
             
     def deselectCell(self):
         self.from_table.clearSelection()
@@ -165,7 +221,13 @@ class CryptoCheckerGUI(QMainWindow):
                     text += '\t'.join(row_text) + '\n'
         
         QApplication.clipboard().setText(text.strip())  # Remove the last newline character
-
+        
+    def on_address_double_clicked(self, item):
+        if item.column() == 0:  # Check if the clicked item is in the address column
+            address = item.text()
+            url = f"https://tronscan.org/#/address/{address}/transfers"
+            webbrowser.open(url)
+        
     def initUI(self):
         # Set the main layout
         main_widget = QWidget()
@@ -192,6 +254,10 @@ class CryptoCheckerGUI(QMainWindow):
         # Create API transaction limit input
         self.api_limit_label = QLabel('API Transaction Limit (Default:100, Max 200):')
         self.api_limit_input = QLineEdit('100')
+        
+        # Create button for viewing/updating the Attribution DB
+        self.db_view_update_button = QPushButton('View/Update Attribution DB', self)
+        self.db_view_update_button.clicked.connect(self.run_db_script)
 
         # Create search and exit buttons
         self.search_button = QPushButton('Search')
@@ -212,6 +278,10 @@ class CryptoCheckerGUI(QMainWindow):
         self.to_table.setSelectionMode(QTableWidget.ExtendedSelection)
         self.to_table.setSelectionBehavior(QTableWidget.SelectItems)
         
+        # Setup for the double click action to open an instance of Tronscan with default browser.
+        self.from_table.itemDoubleClicked.connect(self.on_address_double_clicked)
+        self.to_table.itemDoubleClicked.connect(self.on_address_double_clicked)
+        
         # Add widgets to the layout
         main_layout.addWidget(self.address_label)
         main_layout.addWidget(self.address_input)
@@ -227,6 +297,7 @@ class CryptoCheckerGUI(QMainWindow):
         main_layout.addWidget(QLabel('TO:'))
         main_layout.addWidget(self.to_table)
         main_layout.addWidget(self.rerun_button)
+        main_layout.addWidget(self.db_view_update_button)
         main_layout.addWidget(self.exit_button)
 
         # Set the central widget
@@ -239,12 +310,21 @@ class CryptoCheckerGUI(QMainWindow):
 
         # Set window properties
         self.setWindowTitle('USDT - TRON TRC20 Checker')
-        self.setGeometry(300, 300, 1155, 1510)
+        self.setGeometry(300, 300, 1255, 1510)
         
+    def run_db_script(self):
+        # Running another Python script in the same directory
+        script_path = './DB-VIEW-UPDATE.py'  # Relative path to the script in the same directory
+        subprocess.Popen(['python', script_path], start_new_session=True) 
+
+    def centerOnScreen(self):
+        resolution = QDesktopWidget().screenGeometry()
+        self.move(int((resolution.width() / 2) - (self.frameSize().width() / 2)),
+                  int((resolution.height() / 2) - (self.frameSize().height() / 2)))       
 
 def main():
     app = QApplication(sys.argv)
-    ex = CryptoCheckerGUI()
+    ex = TronUsdtChecker()
     ex.show()
     sys.exit(app.exec_())
 
