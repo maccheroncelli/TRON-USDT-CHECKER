@@ -47,8 +47,9 @@ The USDT - TRON TRC20 Checker is an advanced desktop tool for analyzing USDT tra
 Ensure you have both scripts in the same directory for full functionality. The application provides a holistic view of TRON transactions, making it a valuable asset for users interested in detailed blockchain analysis.
 
 ## Screenshot
-![Screenshot 2024-01-14 162058](https://github.com/maccheroncelli/TRON-USDT-CHECKER/assets/154501937/e5a15d0b-3559-4bf5-a464-eabeacc55232)
-![Screenshot 2024-01-14 155946](https://github.com/maccheroncelli/TRON-USDT-CHECKER/assets/154501937/740b46a8-9884-4317-8d63-94c49c8fb866)
+![Screenshot 2024-01-14 162058](https://github.com/maccheroncelli/TRON-USDT-CHECKER/assets/154501937/90ef5a82-75ce-49c9-9dc1-6765a89e6039)
+![Screenshot 2024-01-14 155946](https://github.com/maccheroncelli/TRON-USDT-CHECKER/assets/154501937/d5694095-c164-4f5c-bc2c-21113d12b653)
+
 
 
 
